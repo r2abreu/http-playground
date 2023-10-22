@@ -1,6 +1,7 @@
 {
   "scripts": {
-    "test": "echo 'test'" 
+    "test": "echo 'test'",
+    "build": "echo 'build'"
   },
   "dependencies": {
     "nodemon": "^3.0.1"
