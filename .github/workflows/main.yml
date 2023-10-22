@@ -11,7 +11,8 @@ jobs:
           node-version: '18.x'
       - run: npm ci
       - run: npm test
-  build:
+  deploy:
+    needs: [test]
     runs-on: ubuntu-latest
     environment: development
     steps:
@@ -29,8 +30,8 @@ jobs:
           SSH_KEY_PATH: ${{ github.workspace }}/../private.key
       - name: Rsync to remote host
         run: |
-          ls
-          rsync -ravz ./${REPOSITORY_NAME} ${EC2_USER}@${EC2_PUBLIC_IP}:/${REPOSITORY_NAME}
+          cat ~/.ssh/private.key
+          rsync -e "ssh -i ~/.ssh/private.key" -ravz ./${REPOSITORY_NAME} ${EC2_USER}@${EC2_PUBLIC_IP}:/${REPOSITORY_NAME}
         env:
           REPOSITORY_NAME: ${{ github.event.repository.name }}
           EC2_USER: ubuntu
