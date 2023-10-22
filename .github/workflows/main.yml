@@ -1,4 +1,4 @@
-name: Build & Deploy
+name: Continous Integration
 on: [push]
 jobs:
   test:
@@ -13,10 +13,25 @@ jobs:
       - run: npm test
   build:
     runs-on: ubuntu-latest
+    environment: development
     steps:
-     - uses: actions/checkout@v4
-     - name: Build
-       uses: actions/setup-node@v3
-       with:
-         node-version: '18.x'
-     - run: npm run build
+      - uses: actions/checkout@v4
+      - name: Create SSH key
+        run: |
+          mkdir -p ~/.ssh/
+          echo "$SSH_PRIVATE_KEY" > ../private.key
+          sudo chmod 600 ../private.key
+          echo "$SSH_KNOWN_HOSTS" > ~/.ssh/known_hosts
+        shell: bash
+        env:
+          SSH_PRIVATE_KEY: ${{secrets.HTTP_PLAYGROUND_DEV_EC2_SSH_KEY}}
+          SSH_KNOWN_HOSTS: ${{secrets.SSH_KNOWN_HOSTS}}
+          SSH_KEY_PATH: ${{ github.workspace }}/../private.key
+      - name: Rsync to remote host
+        run: |
+          ls
+          rsync -ravz ./${REPOSITORY_NAME} ${EC2_USER}@${EC2_PUBLIC_IP}:/${REPOSITORY_NAME}
+        env:
+          REPOSITORY_NAME: ${{ github.event.repository.name }}
+          EC2_USER: ubuntu
+          EC2_PUBLIC_IP: 13.53.87.144
