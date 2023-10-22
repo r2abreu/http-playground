@@ -27,10 +27,9 @@ jobs:
         env:
           SSH_PRIVATE_KEY: ${{secrets.HTTP_PLAYGROUND_DEV_EC2_SSH_KEY}}
           SSH_KNOWN_HOSTS: ${{secrets.SSH_KNOWN_HOSTS}}
-          SSH_KEY_PATH: ${{ github.workspace }}/../private.key
       - name: Rsync to remote host
         run: |
-          rsync -e "ssh -i ~/.ssh/private.key" -ravz ./ ${EC2_USER}@${EC2_PUBLIC_IP}:/${REPOSITORY_NAME}
+          rsync -e "ssh -i ~/.ssh/private.key" -ravz ./ ${EC2_USER}@${EC2_PUBLIC_IP}:~/${REPOSITORY_NAME}
         env:
           REPOSITORY_NAME: ${{ github.event.repository.name }}
           EC2_USER: ubuntu
