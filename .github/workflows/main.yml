@@ -20,9 +20,10 @@ jobs:
       - name: Create SSH key
         run: |
           mkdir -p ~/.ssh/
-          echo "$SSH_PRIVATE_KEY" > ../private.key
-          sudo chmod 600 ../private.key
+          echo "$SSH_PRIVATE_KEY" > ~/.ssh/private.key
+          sudo chmod 600 ~/.ssh/private.key
           echo "$SSH_KNOWN_HOSTS" > ~/.ssh/known_hosts
+          ls ~/.ssh
         shell: bash
         env:
           SSH_PRIVATE_KEY: ${{secrets.HTTP_PLAYGROUND_DEV_EC2_SSH_KEY}}
@@ -30,9 +31,10 @@ jobs:
           SSH_KEY_PATH: ${{ github.workspace }}/../private.key
       - name: Rsync to remote host
         run: |
+          ls ~/.ssh
           cat ~/.ssh/private.key
           rsync -e "ssh -i ~/.ssh/private.key" -ravz ./${REPOSITORY_NAME} ${EC2_USER}@${EC2_PUBLIC_IP}:/${REPOSITORY_NAME}
         env:
           REPOSITORY_NAME: ${{ github.event.repository.name }}
           EC2_USER: ubuntu
-          EC2_PUBLIC_IP: 13.53.87.144
+          EC2_PUBLIC_IP: 13.53.87.144s
