@@ -28,7 +28,7 @@ jobs:
           SSH_PRIVATE_KEY: ${{secrets.HTTP_PLAYGROUND_DEV_EC2_SSH_KEY}}
           SSH_KNOWN_HOSTS: ${{secrets.SSH_KNOWN_HOSTS}}
       - name: Create env file
-        run: cat ${{secrets.HTTP_PLAYGROUND_DEV_DB_ENV}} > ".env"
+        run: echo ${{secrets.HTTP_PLAYGROUND_DEV_DB_ENV}} > ".env"
         shell: bash
       - name: Rsync to remote host
         run: |
