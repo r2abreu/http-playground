@@ -28,8 +28,10 @@ jobs:
           SSH_PRIVATE_KEY: ${{secrets.HTTP_PLAYGROUND_DEV_EC2_SSH_KEY}}
           SSH_KNOWN_HOSTS: ${{secrets.SSH_KNOWN_HOSTS}}
       - name: Create env file
-        run: echo ${{secrets.HTTP_PLAYGROUND_DEV_DB_ENV}} > ".env"
+        run: echo "$ENV_CONTENT" > ".env"
         shell: bash
+        env: 
+          ENV_CONTENT: ${{secrets.HTTP_PLAYGROUND_DEV_DB_ENV}}
       - name: Rsync to remote host
         run: |
           rsync -e "ssh -i ~/.ssh/private.key" -ravz ./ ${EC2_USER}@${EC2_PUBLIC_IP}:~/${REPOSITORY_NAME}
